@@ -129,5 +129,5 @@ dmypy.json
 .pyre/
 
 # My own shinanigans
-.mp3
-.wav
+*.mp3
+*.wav
