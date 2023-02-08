@@ -131,3 +131,7 @@ dmypy.json
 # My own shinanigans
 *.mp3
 *.wav
+
+
+*.idea/
+

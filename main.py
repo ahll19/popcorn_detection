@@ -23,7 +23,7 @@ class DataHandler:
             data[i] = {}
 
             tmp = a2n.audio_from_file(directory_path + file_name)
-            data[i]["data"] = tmp[0]
+            data[i]["data"] = tmp[0][:, 0]
             data[i]["freq"] = tmp[1]
 
         self.sounds = data
@@ -40,5 +40,5 @@ class DataHandler:
 
 
 if __name__ == "__main__":
-    obj = DataHandler("/mnt/c/Users/ander/Documents/Git/popcorn_detection/Sounds/Microwave_no_popcorn/")
+    obj = DataHandler("/home/aau/Git/popcorn_detection/Sounds/Microwave_popcorn/")
     obj.test()
