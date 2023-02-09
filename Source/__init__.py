@@ -1,1 +1,1 @@
-from . import jakob_stft
+from . import JakobSTFT
