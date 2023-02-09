@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import numpy as np
 
 
@@ -66,7 +68,9 @@ class STFT:
     }
 
     @classmethod
-    def stft(cls, signal: np.ndarray, M: int, n: int, window_func: str = "hamming", fs: int = 1):
+    def stft(
+            cls, signal: np.ndarray, M: int, n: int, window_func: str = "hamming", fs: int = 1
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         :param signal: obvious
         :param M: window length
