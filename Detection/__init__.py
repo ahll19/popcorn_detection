@@ -1,1 +1,1 @@
-from . import Detection
+from . import detection_alg
