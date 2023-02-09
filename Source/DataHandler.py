@@ -32,7 +32,7 @@ class DataHandler:
             except IndexError:
                 data[file_name]["left channel"] = tmp_arr
                 data[file_name]["right channel"] = tmp_arr
-            else:
+            except:
                 raise Exception("Something went wrong with the audio file: " + file_name + "")
 
             data[file_name]["freq"] = fs
@@ -47,17 +47,41 @@ class DataHandler:
 
         return data
 
-    def filter_data(self, file_name: str, low_cut: float, high_cut: float):
-        if low_cut < 0:
-            raise Exception("Low cut frequency must be positive")
+    def filter_data(self, file_name: str, low_cut: float = None, high_cut: float = None):
+        """
+        Specifying only low_cut will create a lowpass filter,
+        and specifying only high_cut will create a highpass filter.
+        Specifying both will create a bandpass filter.
+        :param file_name:
+        :param low_cut:
+        :param high_cut:
+        :return:
+        """
+        sos = None
 
-        if high_cut > self.data[file_name]["freq"] / 2:
-            raise Exception("High cut frequency must be less than half the sampling frequency")
+        if low_cut is not None:
+            if low_cut < 0:
+                raise Exception("Low cut frequency must be positive")
 
-        if low_cut > high_cut:
-            raise Exception("Low cut frequency must be less than high cut frequency")
+        if high_cut is not None:
+            if high_cut > self.data[file_name]["freq"] / 2:
+                raise Exception("High cut frequency must be less than half the sampling frequency")
 
-        sos = butter(4, [low_cut, high_cut], btype="bandpass", fs=self.data[file_name]["freq"], output="sos")
+        if low_cut is not None and high_cut is not None:
+            if low_cut > high_cut:
+                raise Exception("Low cut frequency must be less than high cut frequency")
+
+        if low_cut is None and high_cut is None:
+            raise Exception("Must specify at least one cut frequency")
+
+        if low_cut is None and high_cut is not None:
+            sos = butter(4, high_cut, btype="highpass", fs=self.data[file_name]["freq"], output="sos")
+
+        if low_cut is not None and high_cut is None:
+            sos = butter(4, low_cut, btype="lowpass", fs=self.data[file_name]["freq"], output="sos")
+
+        if low_cut is not None and high_cut is not None:
+            sos = butter(4, [low_cut, high_cut], btype="bandpass", fs=self.data[file_name]["freq"], output="sos")
 
         lc = "left channel"
         rc = "right channel"
