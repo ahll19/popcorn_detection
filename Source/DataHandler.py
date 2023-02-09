@@ -11,6 +11,7 @@ from Source.JakobSTFT import STFT, Windows
 
 class DataHandler:
     def __init__(self, directory_path: str):
+        # TODO: create an attribute that stores file_names that the DataHandler is aware of
         self.dir_path = directory_path
         all_files = os.listdir(directory_path)
         sound_files = list()
@@ -32,7 +33,7 @@ class DataHandler:
             except IndexError:
                 data[file_name]["left channel"] = tmp_arr
                 data[file_name]["right channel"] = tmp_arr
-            else:
+            except:
                 raise Exception("Something went wrong with the audio file: " + file_name + "")
 
             data[file_name]["freq"] = fs
@@ -48,6 +49,7 @@ class DataHandler:
         return data
 
     def filter_data(self, file_name: str, low_cut: float = None, high_cut: float = None):
+        # TODO: fix bandpass filter
         """
         Specifying only low_cut will create a lowpass filter,
         and specifying only high_cut will create a highpass filter.
