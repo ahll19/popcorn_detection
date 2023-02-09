@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pydub
 
-from scipy.signal import butter
+from scipy.signal import butter, sosfilt
 
 from Source.JakobSTFT import STFT, Windows
 
@@ -39,6 +39,14 @@ class DataHandler:
 
         self.data = data
 
+    @staticmethod
+    def _normalize_data_to_range(data: np.ndarray, min_val: float, max_val: float):
+        data_range = np.max(data) - np.min(data)
+        data = (data - np.min(data)) / data_range
+        data = data * (max_val - min_val) + min_val
+
+        return data
+
     def filter_data(self, file_name: str, low_cut: float, high_cut: float):
         if low_cut < 0:
             raise Exception("Low cut frequency must be positive")
@@ -49,12 +57,15 @@ class DataHandler:
         if low_cut > high_cut:
             raise Exception("Low cut frequency must be less than high cut frequency")
 
-        b, a = butter(4, [low_cut, high_cut], btype="bandpass", fs=self.data[file_name]["freq"], output="ba")
+        sos = butter(4, [low_cut, high_cut], btype="bandpass", fs=self.data[file_name]["freq"], output="sos")
 
         lc = "left channel"
         rc = "right channel"
-        self.data[file_name]["filtered " + lc] = np.convolve(self.data[file_name][lc], b, mode="same")
-        self.data[file_name]["filtered " + rc] = np.convolve(self.data[file_name][rc], b, mode="same")
+        lc_filtered = sosfilt(sos, self.data[file_name][lc])
+        rc_filtered = sosfilt(sos, self.data[file_name][rc])
+
+        self.data[file_name]["filtered " + lc] = self._normalize_data_to_range(lc_filtered, -1, 1)
+        self.data[file_name]["filtered " + rc] = self._normalize_data_to_range(rc_filtered, -1, 1)
 
     def plot_spectrogram(
             self,
@@ -90,12 +101,10 @@ class DataHandler:
         lc = self.data[file_name]["filtered left channel"]
         rc = self.data[file_name]["filtered right channel"]
 
-        l_range = np.max(lc) - np.min(lc)
-        r_range = np.max(rc) - np.min(rc)
-        rc = (rc - np.min(rc)) / r_range
-        lc = (lc - np.min(lc)) / l_range
-
-        x = np.asarray([lc, rc])
+        x = np.asarray([
+            self._normalize_data_to_range(lc, -1, 1),
+            self._normalize_data_to_range(rc, -1, 1)
+        ])
         y = np.int16(x * 2 ** 15)
         song = pydub.AudioSegment(
             y.tobytes(),

@@ -15,7 +15,7 @@ if __name__ == "__main__":
     )
 
     # obj.plot_spectrogram("popcorn-69750.mp3", "left channel", frequency_resolution=5)
-    obj.filter_data("popcorn-69750.mp3", 50, 6000)
+    obj.filter_data("popcorn-69750.mp3", 500, 4000)
     # obj.plot_spectrogram("popcorn-69750.mp3", "left channel", frequency_resolution=5, filtered=True)
     obj.write_filtered_to_mp3("popcorn-69750.mp3")
 
