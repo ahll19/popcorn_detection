@@ -5,29 +5,31 @@ from Source.DataHandler import DataHandler
 from scipy.signal import find_peaks
 from scipy.stats import poisson
 
-def popcorn_timer(data: np.array, peaks: np.array, sps=44100):
+def popcorn_timer(data: np.array, peaks: np.array, sps=44100, seconds=1):
         '''
         This function takes in the data and the peaks and returns the 
-        probability of a pop and the number of pops in a given second.
+        probability of a pop and the number of pops in a given second(s).
 
         It should be used to determine when the popcorn is done.
 
         If the data has length sps*5 then it iterates over 5 seconds
         and will for each second calculate the probability of a pop and
-        the number of pops in that second.
+        the number of pops in that second, given that seconds=1.
 
         :param data: the data from the audio file
         :param peaks: the peaks from the data
         :param sps: samples per second
-        :return probs: list of probabilities of a pop in a given second
-        :return counts: list of number of pops in a given second
+        :param seconds: number of seconds that the function iterates over,
+                        i.e. the step size in seconds.
+        :return probs: list of probabilities of a pop in a given second(s)
+        :return counts: list of number of pops in a given second(s)
         '''
-        # for loop iterating over x seconds of data and using poi(k=peaks, lambda=running average)
+        # for loop iterating over x seconds of data and using poi(k=peaks, mu=running average)
         # this is used to determine when the probability of a pop is too low then we stop the loop
         # and return the number of pops
         probs = []
         counts = []
-        step = sps # 1 second with 44100 samples per second (standard for mp3)
+        step = sps*seconds # 1 second with 44100 samples per second (standard for mp3)
         for i, second in enumerate(np.arange(0, len(data), step)):
             # calculate probability of a pop
             lower_peak = peaks[second<peaks]
@@ -60,7 +62,7 @@ if __name__=='__main__':
 
     
 
-    probs, counts = popcorn_timer(data, peaks)
+    probs, counts = popcorn_timer(data, peaks, seconds=1)
     plt.plot(probs)
     plt.show()
 
