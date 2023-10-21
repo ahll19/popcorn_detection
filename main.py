@@ -8,7 +8,6 @@ from Source.JakobSTFT import STFT
 
 if __name__ == "__main__":
     import matplotlib as mpl
-    mpl.use("TkAgg")
 
     obj = DataHandler(
         directory_path="/home/aau/Git/popcorn_detection/Sounds/Microwave_popcorn/"
@@ -20,3 +19,4 @@ if __name__ == "__main__":
     obj.write_filtered_to_mp3("popcorn.mp3")
 
     print("tihi")
+    

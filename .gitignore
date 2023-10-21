@@ -128,6 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# macos
+.DS_Store
+
 # My own shinanigans
 *.mp3
 *.wav
